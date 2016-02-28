@@ -1,7 +1,7 @@
 # mongoblog
 A simple blog using mongodb and spring for learning porpouses
 
-Objetivos:
+###Objetivos:
 
 - Home:
 	- Login
@@ -36,7 +36,7 @@ Objetivos:
 	- Usamos MapReduce para buscar en el índice los resultados.
 	
 	
-Plataforma:
+###Plataforma:
 
 	- Spring para el MVC
 	- MongoDB para la persistencia. Mirar si existe integración con Spring y como funciona.
@@ -44,24 +44,28 @@ Plataforma:
 	- Tomcat.
 	- Mongoblog.
 	
-Fases: 
-	0.1.0 - Pantalla de Login.
-		  - Usuario admin en el primer arranque.
-		  - Invitar a usuarios y personalización.
-		  - Cambiar contraseña.
+###Fases:   
+	0.1.0  
+	- Pantalla de Login.
+	- Usuario admin en el primer arranque.
+	- Invitar a usuarios y personalización.
+	- Cambiar contraseña.
 		  
-	0.1.1 - Edición de entradas.
-		  - Single page interface con las entradas de cada portada
-		  - Paginación.
+	0.1.1 
+	- Edición de entradas.
+	- Single page interface con las entradas de cada portada
+	- Paginación.
 		  
-	0.1.2 - Pantalla de detalle de las entradas.
-		  - Edición de comentarios.
-		  - Eliminación de comentarios por parte de los editores/moderadores.
+	0.1.2  
+	- Pantalla de detalle de las entradas.
+	- Edición de comentarios.
+	- Eliminación de comentarios por parte de los editores/moderadores.
 		  
-	0.1.3 - Indexación de las entradas en la edición.
-		  - Refrescar la indexación de las entradas en batch.
-		  - Búsquedas sobre el índice + función de ranking.
+	0.1.3 
+	- Indexación de las entradas en la edición.
+	- Refrescar la indexación de las entradas en batch.
+	- Búsquedas sobre el índice + función de ranking.
 		  
-Documentación:
+###Documentación:
 
 	http://docs.spring.io/spring-data/data-mongo/docs/1.8.4.RELEASE/reference/html/
