@@ -1,0 +1,89 @@
+html {
+    height: 100%;
+    min-height: 100%;
+	width:100%;
+	margin:0px;
+	padding:0px;
+}
+body {
+	margin:0px;
+    height: 100%;
+    min-height: 100%;
+	font-family:sans-serif;
+	font-size:1em;
+}
+
+div#header {
+	width:calc( 100% - 2em );
+	height:6em;
+	padding:1em;
+}
+
+div#content {
+	width:calc( 100% - 2em );
+	height: calc( 100% - 10em);
+	padding: 1em;
+	overflow-y:auto;
+}
+
+div#content div#main {
+	width: calc( 100% - 15em);
+	height:100%;
+	min-height:100%;
+	float:left;
+	line-height: 1.8;
+}
+
+div#content div#side {
+	width: 15em;
+	height:100%;
+	min-height:100%;
+	float:left;
+}
+
+/* Forms */
+div#content div#main label {
+	display:inline-block;
+	width:13em;
+	text-align: right;
+}
+
+div#content div#main input.readonly {
+	border:1px solid darkgray;
+	background-color:lightgray;
+	color: black;
+	
+}
+
+div#content div#main input[type='password'] {
+	width:50%;
+}
+
+div#content div#main input[type='text'] {
+	width:50%;
+}
+
+div#content div#main input[type='text']:valid {
+	border:1px solid darkgreen;
+	background-color:lightgreen;
+}
+
+div#content div#main input[type='text']:invalid {
+	border:1px solid red;
+	background-color:pink;
+}
+
+
+div#content div#main input[type='email'] {
+	width:50%;
+}
+
+div#content div#main input[type='email']:valid {
+	border:1px solid darkgreen;
+	background-color:lightgreen;
+}
+
+div#content div#main input[type='email']:invalid {
+	border:1px solid red;
+	background-color:pink;
+}
