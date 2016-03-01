@@ -10,3 +10,15 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+#eclipse
+RemoteSystemsTempFiles
+.metadata
+.recommenders
+mongoblog/.settings
+mongoblog/.apt_generated
+mongoblog/target
+mongoblog/.classpath
+mongoblog/.factorypath
+mongoblog/.project
+Servers

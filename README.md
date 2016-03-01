@@ -46,15 +46,16 @@ A simple blog using mongodb and spring for learning porpouses
 	
 ###Fases:   
 	0.1.0  
-	- Pantalla de Login.
-	- Usuario admin en el primer arranque.
-	- Invitar a usuarios y personalización.
-	- Cambiar contraseña.
+	- Login Screen
+	- Create admin user in first boot
+	- Personalize user
+	- Password change.
+	- Invite people through email.
 		  
 	0.1.1 
-	- Edición de entradas.
-	- Single page interface con las entradas de cada portada
-	- Paginación.
+	- Blog entry edition.
+	- Single page blog front with ajax
+	- Pagination.
 		  
 	0.1.2  
 	- Pantalla de detalle de las entradas.
@@ -69,3 +70,21 @@ A simple blog using mongodb and spring for learning porpouses
 ###Documentación:
 
 	http://docs.spring.io/spring-data/data-mongo/docs/1.8.4.RELEASE/reference/html/
+	http://openmymind.net/mongodb.pdf
+	http://docs.mongodb.org/ecosystem/drivers/java/
+	
+###Configuración
+
+  In order to run the application there are several values that need to be configured in the JNDI context. The way of doing this depends on the server. In
+  Apache Tomcat you can use the context.xml file of the application adding the following lines inside the <Context> element:
+  
+	<Environment name="bbdd.host" value="localhost" type="java.lang.String" override="false"/>
+      	<Environment name="bbdd.port" value="27017" type="java.lang.Integer" override="false"/>
+	<Environment name="mail.host" value="smtp.gmail.com" type="java.lang.String" override="false"/>
+	<Environment name="mail.port" value="587" type="java.lang.Integer" override="false"/>
+	<Environment name="mail.username" value="your gmail account" type="java.lang.String" override="false"/>
+	<Environment name="mail.password" value="yourt gmail account password" type="java.lang.String" override="false"/>
+	<Environment name="mail.transport.protocol" value="smtp" type="java.lang.String" override="false"/>
+	<Environment name="mail.smtp.auth" value="true" type="java.lang.String" override="false"/>
+	<Environment name="mail.smtp.starttls.enable" value="true" type="java.lang.String" override="false"/>
+	<Environment name="mail.debug" value="true" type="java.lang.String" override="false"/>
