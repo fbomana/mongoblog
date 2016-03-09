@@ -36,12 +36,15 @@
 					<ul>
 						<li><a href="../changepassword/${user.id}">Change password</a></li>
 						<li><a href="../invite/${user.id}">Invite another user</a></li>
+						<li><a href="../unpublished/${user.id}">Unpublished entries</a>
+						<li><a href="javascript:document.fedit.submit();">New Entry</a>
 					</ul>
 			</fieldset>
 			</form>
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
+				<a href="../${sessionScope.loggeduser.nick}">home</a><br>
 				<a href="../config/${sessionScope.loggeduser.id}">config</a><br>
 				<a href="../../logout">logout</a>
 			</c:if>
@@ -50,6 +53,10 @@
 			</c:if>
 		</div>
 	</div>
+	<form method="post" name="fedit" action="../../redirect">
+		<input type="hidden" name="from" value="config">
+		<input type="hidden" name="to" value="newentry">
+	</form>
 </body>
 <script>
 	document.getElementById("email").onchange = function() {

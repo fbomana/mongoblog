@@ -1,26 +1,25 @@
 package es.ait.mongoblog.controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import es.ait.mongoblog.config.PasswordEncoder;
+import es.ait.mongoblog.model.Entry;
+import es.ait.mongoblog.model.EntryRepository;
 import es.ait.mongoblog.model.User;
-import es.ait.mongoblog.model.UserRepository;
 
 @Controller
 @RequestMapping("/user")
@@ -30,187 +29,132 @@ public class BlogController
 	private MongoOperations mongo;
 	
 	@Autowired
-	private UserRepository users;
-	
-	@Autowired
-	private JavaMailSenderImpl sender;
+	private EntryRepository entries;
 	
 	@RequestMapping("{user}")
-	public String portadaBlog( @PathVariable String user, Model model )
+	public String portadaBlog( @PathVariable String user, Model model, HttpSession session )
 	{
 		User theUser = mongo.findOne(Query.query( Criteria.where("nick").is( user )), User.class );
 		if ( theUser  != null )
 		{
+			if ( session.getAttribute("page") != null )
+			{
+				model.addAttribute("page", session.getAttribute("page"));
+				session.removeAttribute("page");
+			}
 			model.addAttribute("user", user );
 			return "portada.jsp";	
 		}
 		return "redirect:/notFound.jsp";
 	}
 	
-	
-	
-	/*-------------------------------------------------------------------------------------
-	 --- Config screen Methods
-	 -------------------------------------------------------------------------------------*/ 
-
 	/**
-	 * Config screen entrance method. Redirects to the logout if detects that we are trying to configure a
-	 * user that it's not the logged user.
+	 * Show a list of all entries with a publish date greater tharn the actual date.
 	 * 
 	 * @param userId
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(path="/config/{userId}", method=RequestMethod.GET)
-	public String config(@PathVariable String userId, Model model, HttpSession session )
-	{
-		User user = (User)session.getAttribute("loggeduser");
-		if ( user != null && userId.equals( user.getId()))
-		{
-			user = users.findOne( userId );
-			model.addAttribute("user", user );
-			return "config.jsp";
-		}
-		return "redirect:/logout";
-	}
-	
-	/**
-	 * Saves the changes made to the user. It redirects to the logout if it detects an attemp to modify
-	 * a user diferrent than the logged user.
-	 * 
-	 * @param request
 	 * @param session
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(path="/saveconfig", method=RequestMethod.POST)
-	public String configPost( HttpServletRequest request, HttpSession session, Model model )
+	@RequestMapping("/unpublished/{userId}")
+	public String unpublishedEntries( @PathVariable String userId, HttpSession session, Model model )
 	{
-		User user = ( User ) session.getAttribute("loggeduser");
-		if ( user == null || !user.getId().equals( request.getParameter("id")))
+		User user = ( User )session.getAttribute("loggeduser");
+		if ( user == null || !user.getId().equals( userId ))
 		{
 			return "redirect:/logout";
 		}
 		
-		user = users.findOne( request.getParameter("id"));
-		User altUser = users.findOneByNick( request.getParameter("nick"));
-		if ( altUser != null && !altUser.getId().equals( user.getId()))
-		{
-			model.addAttribute("error", "The nick " + request.getParameter("nick") + " it's already in use by another user.");
-		}
-		else
-		{
-			user.setNick( request.getParameter("nick"));
-			user.setEmail( request.getParameter("email"));
-			users.save( user );
-			session.setAttribute("loggeduser", user );
-		}
+		model.addAttribute("entries", entries.findByAuthorAndPublishDateAfterOrderByPublishDateAsc( user.getNick(), new Date()));
 		
-		return "redirect:/user/config/" + user.getId();
+		return "/user/unpublished.jsp";
 	}
 	
 	/**
-	 * Launches the password change screen.
-	 * 
-	 * @param userId
+	 * Launches the edit entry screen for an existing entry
+	 * @param entryId
 	 * @param session
+	 * @param model
 	 * @return
 	 */
-	@RequestMapping(path="/changepassword/{userId}", method=RequestMethod.GET)
-	public String changePassword( @PathVariable String userId, @RequestParam(required=false) String error, HttpSession session, Model model )
+	@RequestMapping("/editentry/{entryId}")
+	public String editEntry( @PathVariable String entryId, HttpSession session, Model model )
 	{
 		User user = ( User )session.getAttribute("loggeduser");
-		if ( user != null && user.getId().equals( userId ))
+		if ( user == null )
 		{
-			model.addAttribute("user", user );
-			if ( "1".equals( error ))
-			{
-				model.addAttribute("error", "Wrong old password");
-			}
-			return "/user/changepassword.jsp";
+			return "redirect:/logout";
 		}
-		return "redirect:/logout"; 
+		
+		Entry entry = entries.findOne( entryId );
+		model.addAttribute( "entry", entry );
+		model.addAttribute("urlPrefix", "../");
+		model.addAttribute("publishDate", new SimpleDateFormat("yyyy-MM-dd").format( entry.getPublishDate()));
+		model.addAttribute("publishTime", new SimpleDateFormat("HH:mm").format( entry.getPublishDate()));
+		
+		return "/user/editentry.jsp";
 	}
 	
 	/**
-	 * Saves a password change.
-	 * 
+	 * Launches the edit entry screen for a new entry 
+	 * @param session
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/newentry")
+	public String newentry( HttpSession session, Model model )
+	{
+		User user = ( User )session.getAttribute("loggeduser");
+		if ( user == null )
+		{
+			return "redirect:/logout";
+		}
+		
+		return "/user/editentry.jsp";
+	}
+	
+	/**
+	 * Saves the results of the edit entry screen on BBDD.
 	 * @param request
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(path="/savepasswordchange", method=RequestMethod.POST) 
-	public String savePasswordChange( HttpServletRequest request, HttpSession session ) throws Exception
-	{
-		User user = (User) session.getAttribute("loggeduser" );
-		if ( user == null || !user.getId().equals( request.getParameter("id")))
-		{
-			return "redirect:/logout"; 	
-		}
-		user = users.findOne( request.getParameter("id"));
-		String encriptedPassword = PasswordEncoder.encode( request.getParameter("oldpassword"), user.getInviteEmail() + user.getInviteDate().getTime());
-		if ( !encriptedPassword.equals( user.getPassword() ))
-		{
-			return "redirect:/user/changepassword/" + user.getId() + "?error=1";
-		}
-		user.setPassword( PasswordEncoder.encode( request.getParameter("newpassword"), user.getInviteEmail() + user.getInviteDate().getTime()));
-		users.save( user );
-		session.setAttribute("loggeduser",  user );
-		
-		return "redirect:/user/config/" + user.getId(); 
-	}
-	
-	
-	@RequestMapping(path="/invite/{userId}", method=RequestMethod.GET)
-	public String invite( @PathVariable String userId, @RequestParam(required=false) String error, HttpSession session, Model model )
+	@RequestMapping(path="/saveentry", method=RequestMethod.POST)
+	public String saveEntry( HttpServletRequest request, HttpSession session ) throws Exception
 	{
 		User user = ( User )session.getAttribute("loggeduser");
-		if ( user != null && user.getId().equals( userId ))
+		Entry entry;
+		if ( request.getParameter("id") != null && !"".equals( request.getParameter("id")))
 		{
-			model.addAttribute("user", user );
-			if ( "1".equals( error ))
-			{
-				model.addAttribute("error", "User already invited");
-			}
-			return "/user/invite.jsp";
+			entry = entries.findOne( request.getParameter("id"));
 		}
-		return "redirect:/logout"; 
+		else
+		{
+			entry = new Entry();
+		}
+		entry.setTitle( request.getParameter("title"));
+		entry.setEntry( request.getParameter("entry"));
+		entry.setResume( request.getParameter("resume"));
+		if ( entry.getId() == null )
+		{
+			entry.setAuthor( user.getNick());
+			entry.setBlog( user.getNick());
+		}
+		entry.setPublishDate( new SimpleDateFormat( "yyyy-MM-dd HH:mm").parse( request.getParameter("publishDate") + " " + request.getParameter("publishTime") ));
+		entries.save( entry );
+		return "redirect:/goback";
 	}
 	
-	
-	@RequestMapping(path="/sendinvite", method=RequestMethod.POST) 
-	public String invite( HttpServletRequest request, HttpSession session) throws Exception
-	{
-		User sessionUser = (User) session.getAttribute("loggeduser" );
-		if ( sessionUser == null || !sessionUser.getId().equals( request.getParameter("id")))
+	@RequestMapping("/viewentry/{entryId}")
+	public String viewEntry( @PathVariable("entryId") String entryId, Model model )
+	{		
+		Entry entry = entries.findOne( entryId );
+		if ( entry == null )
 		{
-			return "redirect:/logout"; 	
+			return "redirect:/logout";
 		}
-		User duplicated = users.findOneByEmailOrInviteEmail( request.getParameter("email"), request.getParameter("email") );
-		if ( duplicated != null )
-		{
-			return "redirect:/user/invite/" + sessionUser.getId() + "?error=1"; 
-		}
-			
-		User user = new User();
-		user.setInviteDate( new Date() );
-		user.setInviteEmail( request.getParameter("email") );
-		user.setEmail( request.getParameter("email") );
-
-		String randomPassword = PasswordEncoder.randomPassword( 8 );
-		user.setPassword( PasswordEncoder.encode( randomPassword, user.getInviteEmail() + user.getInviteDate().getTime()));
-		
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo( user.getEmail());
-		message.setFrom( "aitkiar@gmail.com");
-		message.setText("You have been invited to use the mongo blog. Your can login using your email address: " + user.getEmail() + " and the password " + randomPassword );
-		message.setSubject("Mongoblog invitation");
-		sender.send( message );
-		
-		users.save( user );
-		
-		
-		return "redirect:/user/config/" + sessionUser.getId(); 
+		model.addAttribute( "entry", entry );
+		return "/user/viewentry.jsp";
 	}
 	
 }

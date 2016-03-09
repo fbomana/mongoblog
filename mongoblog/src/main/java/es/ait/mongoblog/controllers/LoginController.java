@@ -70,4 +70,73 @@ public class LoginController
 		}
 		return  "redirect:/notFound.jsp";
 	}
+	
+	@RequestMapping( path="/redirect")
+	public String redirectTo( HttpServletRequest request, HttpSession session )
+	{
+		session.setAttribute("from", request.getParameter("from"));
+		if ( "home".equals( request.getParameter("from")))
+		{
+			session.setAttribute("page", request.getParameter("page"));
+			session.setAttribute("nick", request.getParameter("nick"));
+		}
+		switch( request.getParameter("to") )
+		{
+			case "edit":
+			{
+				return "redirect:/user/editentry/" + request.getParameter("id");
+			}
+			case "newentry":
+			{
+				return "redirect:/user/newentry";
+			}
+			case "viewentry":
+			{
+				return "redirect:/user/viewentry/" + request.getParameter("id");
+			}
+		}
+		return "redirect:/logout";
+	}
+	
+
+	@RequestMapping( path="/goback")
+	public String goBack( HttpSession session )
+	{
+		String from = (String)session.getAttribute("from");
+		session.removeAttribute("from");
+		switch ( from )
+		{
+			case "home":
+			{
+				String nick = (String)session.getAttribute("nick");
+				if ( nick != null )
+				{
+					session.removeAttribute("nick");
+					return "redirect:/user/" + nick;
+				}
+				break;
+			}
+			case "unpublished":
+			{
+				User user = ( User )session.getAttribute("loggeduser");
+				if ( user != null )
+				{
+					return "redirect:/user/unpublished/" + user.getId();
+				}
+				break;
+			}
+			case "config":
+			{
+				User user = ( User )session.getAttribute("loggeduser");
+				if ( user != null )
+				{
+					return "redirect:/user/config/" + user.getId();
+				}
+				break;
+			}
+			
+		}
+		
+		return "redirect:/logout";
+	}
 }

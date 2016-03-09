@@ -10,6 +10,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.core.WriteResultChecking;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.mongodb.MongoClient;
 
@@ -20,7 +22,9 @@ import com.mongodb.MongoClient;
  *
  */
 @Configuration
-@EnableMongoRepositories("es.ait.mongoblog.model")	
+@EnableMongoRepositories("es.ait.mongoblog.model")
+@EnableWebMvc
+@EnableSpringDataWebSupport
 public class MongoConfig 
 {
 //	public @Bean MongoClientFactoryBean mongo()

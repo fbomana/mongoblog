@@ -54,6 +54,7 @@ A simple blog using mongodb and spring for learning porpouses
 		  
 	0.1.1 
 	- Blog entry edition.
+	- New resume field for entries.
 	- Single page blog front with ajax
 	- Pagination.
 		  
@@ -79,7 +80,7 @@ A simple blog using mongodb and spring for learning porpouses
   Apache Tomcat you can use the context.xml file of the application adding the following lines inside the <Context> element:
   
 	<Environment name="bbdd.host" value="localhost" type="java.lang.String" override="false"/>
-      	<Environment name="bbdd.port" value="27017" type="java.lang.Integer" override="false"/>
+	<Environment name="bbdd.port" value="27017" type="java.lang.Integer" override="false"/>
 	<Environment name="mail.host" value="smtp.gmail.com" type="java.lang.String" override="false"/>
 	<Environment name="mail.port" value="587" type="java.lang.Integer" override="false"/>
 	<Environment name="mail.username" value="your gmail account" type="java.lang.String" override="false"/>

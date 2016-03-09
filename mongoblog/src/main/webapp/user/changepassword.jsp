@@ -33,6 +33,7 @@
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
+				<a href="../${sessionScope.loggeduser.nick}">home</a><br>
 				<a href="../config/${sessionScope.loggeduser.id}">config</a><br>
 				<a href="../../logout">logout</a>
 			</c:if>
