@@ -46,6 +46,11 @@ public class ConfigController
 			model.addAttribute("user", loggedUser );
 			return "/user/config.jsp";
 		}
+		else if ( loggedUser != null && user.equals( loggedUser.getEmail()) && loggedUser.getNick() == null )
+		{			
+			model.addAttribute("user", loggedUser );
+			return "/user/config.jsp";
+		}
 		return "redirect:/logout";
 	}
 	
@@ -59,29 +64,29 @@ public class ConfigController
 	 * @return
 	 */
 	@RequestMapping(path="{user}/config/saveconfig", method=RequestMethod.POST)
-	public String configPost( @PathVariable String theUser, HttpServletRequest request, HttpSession session, Model model )
+	public String configPost( @PathVariable String user, HttpServletRequest request, HttpSession session, Model model )
 	{
-		User user = ( User ) session.getAttribute("loggeduser");
-		if ( user == null || !user.getId().equals( request.getParameter("id")))
+		User loggedUser = ( User ) session.getAttribute("loggeduser");
+		if ( loggedUser == null || !loggedUser.getId().equals( request.getParameter("id")))
 		{
 			return "redirect:/logout";
 		}
 		
-		user = users.findOne( request.getParameter("id"));
+		loggedUser = users.findOne( request.getParameter("id"));
 		User altUser = users.findOneByNick( request.getParameter("nick"));
-		if ( altUser != null && !altUser.getId().equals( user.getId()))
+		if ( altUser != null && !altUser.getId().equals( loggedUser.getId()))
 		{
 			model.addAttribute("error", "The nick " + request.getParameter("nick") + " it's already in use by another user.");
 		}
 		else
 		{
-			user.setNick( request.getParameter("nick"));
-			user.setEmail( request.getParameter("email"));
-			users.save( user );
-			session.setAttribute("loggeduser", user );
+			loggedUser.setNick( request.getParameter("nick"));
+			loggedUser.setEmail( request.getParameter("email"));
+			users.save( loggedUser );
+			session.setAttribute("loggeduser", loggedUser );
 		}
 		
-		return "redirect:/" + theUser + "/config/" + user.getId();
+		return "redirect:/" + loggedUser.getNick() + "/config";
 	}
 	
 	/**

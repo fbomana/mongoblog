@@ -14,7 +14,7 @@
 	</div>
 	<div id="content">
 		<div id="main">
-			<form method="post" id="fusuario" name="fusuario" action="../saveconfig">
+			<form method="post" id="fusuario" name="fusuario" action="./config/saveconfig">
 			<fieldset>
 			<legend>Config user</legend>
 			<input type="hidden" name="id" value="${user.id}">
