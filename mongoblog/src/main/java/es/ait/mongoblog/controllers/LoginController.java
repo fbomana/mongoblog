@@ -47,11 +47,11 @@ public class LoginController
 			session.setAttribute("loggeduser", user );
 			if ( user.getNick() != null )
 			{
-				return "redirect:/user/" + user.getNick();
+				return "redirect:/" + user.getNick() + "/home";
 			}
 			else
 			{
-				return "redirect:/user/config/" + user.getId();
+				return "redirect:/" + user.getEmail() +"/config";
 			}
 		}
 		return "login.jsp?error";
@@ -65,7 +65,7 @@ public class LoginController
 		{
 			if ( user.getNick() != null )
 			{
-				return "redirect:/user/" +((User)session.getAttribute( "loggeduser" )).getNick();
+				return "redirect:/" + user.getNick() + "/home";
 			}
 		}
 		return  "redirect:/notFound.jsp";
@@ -74,6 +74,8 @@ public class LoginController
 	@RequestMapping( path="/redirect")
 	public String redirectTo( HttpServletRequest request, HttpSession session )
 	{
+		User user = ( User ) session.getAttribute("loggeduser");
+		
 		session.setAttribute("from", request.getParameter("from"));
 		if ( "home".equals( request.getParameter("from")))
 		{
@@ -84,15 +86,15 @@ public class LoginController
 		{
 			case "edit":
 			{
-				return "redirect:/user/editentry/" + request.getParameter("id");
+				return "redirect:/" + user.getNick() + "/config/editentry/" + request.getParameter("id");
 			}
 			case "newentry":
 			{
-				return "redirect:/user/newentry";
+				return "redirect:/" + user.getNick() + "/config/newentry";
 			}
 			case "viewentry":
 			{
-				return "redirect:/user/viewentry/" + request.getParameter("id");
+				return "redirect:/" + user.getNick() + "/viewentry/" + request.getParameter("id");
 			}
 		}
 		return "redirect:/logout";
@@ -112,7 +114,7 @@ public class LoginController
 				if ( nick != null )
 				{
 					session.removeAttribute("nick");
-					return "redirect:/user/" + nick;
+					return "redirect:/" + nick + "/home";
 				}
 				break;
 			}
@@ -121,7 +123,7 @@ public class LoginController
 				User user = ( User )session.getAttribute("loggeduser");
 				if ( user != null )
 				{
-					return "redirect:/user/unpublished/" + user.getId();
+					return "redirect:/" + user.getNick() + "/config/unpublished";
 				}
 				break;
 			}
@@ -130,7 +132,7 @@ public class LoginController
 				User user = ( User )session.getAttribute("loggeduser");
 				if ( user != null )
 				{
-					return "redirect:/user/config/" + user.getId();
+					return "redirect:/" + user.getNick() + "/config";
 				}
 				break;
 			}

@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Mongoblog - ${user.nick} - Unpublished entries</title>
+	<title>Mongoblog - ${user} - Unpublished entries</title>
 	<link rel="stylesheet" href="../../css/mongoblog.css">
 </head>
 <body>
@@ -23,8 +23,8 @@
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
-				<a href="../${sessionScope.loggeduser.nick}">home</a><br>
-				<a href="../config/${sessionScope.loggeduser.id}">config</a><br>
+				<a href="../home">home</a><br>
+				<a href="../config">config</a><br>
 				<a href="../../logout">logout</a>
 			</c:if>
 			<c:if test="${sessionScope.loggeduser == null}">

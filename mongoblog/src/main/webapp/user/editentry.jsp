@@ -5,12 +5,12 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Mongoblog - ${user.nick} - Edit entry</title>
-	<link rel="stylesheet" href="${urlPrefix}../css/mongoblog.css">
-	<link rel="stylesheet" href="${urlPrefix}../css/newentry.css">
-	<script src="${urlPrefix}../js/mongoblog.js"></script>
-    <script src="${urlPrefix}../js/vue.min.js"></script>
-    <script src="${urlPrefix}../js/marked.min.js"></script>
+	<title>Mongoblog - ${user} - Edit entry</title>
+	<link rel="stylesheet" href="${urlPrefix}../../css/mongoblog.css">
+	<link rel="stylesheet" href="${urlPrefix}../../css/newentry.css">
+	<script src="${urlPrefix}../../js/mongoblog.js"></script>
+    <script src="${urlPrefix}../../js/vue.min.js"></script>
+    <script src="${urlPrefix}../../js/marked.min.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.10.1.js"></script>
 	<script src="http://cdn.jsdelivr.net/webshim/1.12.4/extras/modernizr-custom.js"></script>
 	<script src="http://cdn.jsdelivr.net/webshim/1.12.4/polyfiller.js"></script>
@@ -52,12 +52,12 @@ webshims.polyfill('forms forms-ext');
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
-				<a href="${urlPrefix}${sessionScope.loggeduser.nick}">home</a><br>
-				<a href="${urlPrefix}config/${sessionScope.loggeduser.id}">config</a><br>
-				<a href="${urlPrefix}../logout">logout</a>
+				<a href="${urlPrefix}../home">home</a><br>
+				<a href="${urlPrefix}../config">config</a><br>
+				<a href="${urlPrefix}../../logout">logout</a>
 			</c:if>
 			<c:if test="${sessionScope.loggeduser == null}">
-				<a href="${urlPrefix}../login">login</a>
+				<a href="${urlPrefix}../../login">login</a>
 			</c:if>
 		</div>
 	</div>
@@ -72,7 +72,7 @@ window.onload = function() {
 	var params = new Array();
 	params[0] = "id";
 	params[1] = "${entry.id}";
-	get( "${urlPrefix}../services/entry", params, function ( ok, xhr )
+	get( "${urlPrefix}../../services/entry", params, function ( ok, xhr )
 		{
 			if ( ok )
 			{

@@ -20,7 +20,6 @@ import es.ait.mongoblog.model.User;
 import es.ait.mongoblog.model.UserRepository;
 
 @Controller
-@RequestMapping("/user")
 public class ConfigController 
 {
 	@Autowired
@@ -37,15 +36,15 @@ public class ConfigController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(path="/config/{userId}", method=RequestMethod.GET)
-	public String config(@PathVariable String userId, Model model, HttpSession session )
+	@RequestMapping(path="{user}/config", method=RequestMethod.GET)
+	public String config(@PathVariable String user, Model model, HttpSession session )
 	{
-		User user = (User)session.getAttribute("loggeduser");
-		if ( user != null && userId.equals( user.getId()))
+		User loggedUser = (User)session.getAttribute("loggeduser");
+		if ( loggedUser != null && user.equals( loggedUser.getNick()))
 		{
-			user = users.findOne( userId );
-			model.addAttribute("user", user );
-			return "config.jsp";
+			loggedUser = users.findOneByNick( user );
+			model.addAttribute("user", loggedUser );
+			return "/user/config.jsp";
 		}
 		return "redirect:/logout";
 	}
@@ -59,8 +58,8 @@ public class ConfigController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(path="/saveconfig", method=RequestMethod.POST)
-	public String configPost( HttpServletRequest request, HttpSession session, Model model )
+	@RequestMapping(path="{user}/config/saveconfig", method=RequestMethod.POST)
+	public String configPost( @PathVariable String theUser, HttpServletRequest request, HttpSession session, Model model )
 	{
 		User user = ( User ) session.getAttribute("loggeduser");
 		if ( user == null || !user.getId().equals( request.getParameter("id")))
@@ -82,7 +81,7 @@ public class ConfigController
 			session.setAttribute("loggeduser", user );
 		}
 		
-		return "redirect:/user/config/" + user.getId();
+		return "redirect:/" + theUser + "/config/" + user.getId();
 	}
 	
 	/**
@@ -92,13 +91,13 @@ public class ConfigController
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(path="/changepassword/{userId}", method=RequestMethod.GET)
-	public String changePassword( @PathVariable String userId, @RequestParam(required=false) String error, HttpSession session, Model model )
+	@RequestMapping(path="/{user}/config/changepassword", method=RequestMethod.GET)
+	public String changePassword( @PathVariable String user, @RequestParam(required=false) String error, HttpSession session, Model model )
 	{
-		User user = ( User )session.getAttribute("loggeduser");
-		if ( user != null && user.getId().equals( userId ))
+		User loggerdUser = ( User )session.getAttribute("loggeduser");
+		if ( loggerdUser != null && loggerdUser.getNick().equals( user ))
 		{
-			model.addAttribute("user", user );
+			model.addAttribute("user", loggerdUser );
 			if ( "1".equals( error ))
 			{
 				model.addAttribute("error", "Wrong old password");
@@ -115,35 +114,35 @@ public class ConfigController
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(path="/savepasswordchange", method=RequestMethod.POST) 
-	public String savePasswordChange( HttpServletRequest request, HttpSession session ) throws Exception
+	@RequestMapping(path="/{user}/config/savepasswordchange", method=RequestMethod.POST) 
+	public String savePasswordChange(@PathVariable final String user, HttpServletRequest request, HttpSession session ) throws Exception
 	{
-		User user = (User) session.getAttribute("loggeduser" );
-		if ( user == null || !user.getId().equals( request.getParameter("id")))
+		User loggedUser = (User) session.getAttribute("loggeduser" );
+		if ( loggedUser == null || !loggedUser.getId().equals( request.getParameter("id")) || !loggedUser.getNick().equals( user ))
 		{
 			return "redirect:/logout"; 	
 		}
-		user = users.findOne( request.getParameter("id"));
-		String encriptedPassword = PasswordEncoder.encode( request.getParameter("oldpassword"), user.getInviteEmail() + user.getInviteDate().getTime());
-		if ( !encriptedPassword.equals( user.getPassword() ))
+		loggedUser = users.findOne( request.getParameter("id"));
+		String encriptedPassword = PasswordEncoder.encode( request.getParameter("oldpassword"), loggedUser.getInviteEmail() + loggedUser.getInviteDate().getTime());
+		if ( !encriptedPassword.equals( loggedUser.getPassword() ))
 		{
-			return "redirect:/user/changepassword/" + user.getId() + "?error=1";
+			return "redirect:/user/changepassword/" + loggedUser.getId() + "?error=1";
 		}
-		user.setPassword( PasswordEncoder.encode( request.getParameter("newpassword"), user.getInviteEmail() + user.getInviteDate().getTime()));
-		users.save( user );
-		session.setAttribute("loggeduser",  user );
+		loggedUser.setPassword( PasswordEncoder.encode( request.getParameter("newpassword"), loggedUser.getInviteEmail() + loggedUser.getInviteDate().getTime()));
+		users.save( loggedUser );
+		session.setAttribute("loggeduser",  loggedUser );
 		
-		return "redirect:/user/config/" + user.getId(); 
+		return "redirect:/" + user + "/config"; 
 	}
 	
 	
-	@RequestMapping(path="/invite/{userId}", method=RequestMethod.GET)
-	public String invite( @PathVariable String userId, @RequestParam(required=false) String error, HttpSession session, Model model )
+	@RequestMapping(path="/{user}/config/invite", method=RequestMethod.GET)
+	public String invite( @PathVariable String user, @RequestParam(required=false) String error, HttpSession session, Model model )
 	{
-		User user = ( User )session.getAttribute("loggeduser");
-		if ( user != null && user.getId().equals( userId ))
+		User loggedUser = ( User )session.getAttribute("loggeduser");
+		if ( loggedUser != null && loggedUser.getNick().equals( user ))
 		{
-			model.addAttribute("user", user );
+			model.addAttribute("user", loggedUser );
 			if ( "1".equals( error ))
 			{
 				model.addAttribute("error", "User already invited");
@@ -154,7 +153,7 @@ public class ConfigController
 	}
 	
 	
-	@RequestMapping(path="/sendinvite", method=RequestMethod.POST) 
+	@RequestMapping(path="/{user}/config/sendinvite", method=RequestMethod.POST) 
 	public String invite( HttpServletRequest request, HttpSession session) throws Exception
 	{
 		User sessionUser = (User) session.getAttribute("loggeduser" );
@@ -186,6 +185,6 @@ public class ConfigController
 		users.save( user );
 		
 		
-		return "redirect:/user/config/" + sessionUser.getId(); 
+		return "redirect:/" + sessionUser.getNick() + "/config"; 
 	}
 }

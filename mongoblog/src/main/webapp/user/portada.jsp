@@ -20,7 +20,7 @@
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
-				<a href="config/${sessionScope.loggeduser.id}">config</a><br>
+				<a href="config">config</a><br>
 				<a href="../logout">logout</a>
 			</c:if>
 			<c:if test="${sessionScope.loggeduser == null}">

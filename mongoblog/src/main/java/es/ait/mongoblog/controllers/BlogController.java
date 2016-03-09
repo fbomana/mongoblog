@@ -22,7 +22,6 @@ import es.ait.mongoblog.model.EntryRepository;
 import es.ait.mongoblog.model.User;
 
 @Controller
-@RequestMapping("/user")
 public class BlogController 
 {
 	@Autowired
@@ -31,7 +30,7 @@ public class BlogController
 	@Autowired
 	private EntryRepository entries;
 	
-	@RequestMapping("{user}")
+	@RequestMapping("/{user}/home")
 	public String portadaBlog( @PathVariable String user, Model model, HttpSession session )
 	{
 		User theUser = mongo.findOne(Query.query( Criteria.where("nick").is( user )), User.class );
@@ -43,7 +42,7 @@ public class BlogController
 				session.removeAttribute("page");
 			}
 			model.addAttribute("user", user );
-			return "portada.jsp";	
+			return "/user/portada.jsp";	
 		}
 		return "redirect:/notFound.jsp";
 	}
@@ -56,16 +55,16 @@ public class BlogController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/unpublished/{userId}")
-	public String unpublishedEntries( @PathVariable String userId, HttpSession session, Model model )
+	@RequestMapping("/{user}/config/unpublished")
+	public String unpublishedEntries( @PathVariable String user, HttpSession session, Model model )
 	{
-		User user = ( User )session.getAttribute("loggeduser");
-		if ( user == null || !user.getId().equals( userId ))
+		User loggedUser = ( User )session.getAttribute("loggeduser");
+		if ( loggedUser == null )
 		{
 			return "redirect:/logout";
 		}
 		
-		model.addAttribute("entries", entries.findByAuthorAndPublishDateAfterOrderByPublishDateAsc( user.getNick(), new Date()));
+		model.addAttribute("entries", entries.findByAuthorAndPublishDateAfterOrderByPublishDateAsc( user, new Date()));
 		
 		return "/user/unpublished.jsp";
 	}
@@ -77,11 +76,11 @@ public class BlogController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/editentry/{entryId}")
-	public String editEntry( @PathVariable String entryId, HttpSession session, Model model )
+	@RequestMapping("/{user}/config/editentry/{entryId}")
+	public String editEntry( @PathVariable String user, @PathVariable String entryId, HttpSession session, Model model )
 	{
-		User user = ( User )session.getAttribute("loggeduser");
-		if ( user == null )
+		User loggedUser = ( User )session.getAttribute("loggeduser");
+		if ( loggedUser == null )
 		{
 			return "redirect:/logout";
 		}
@@ -101,11 +100,11 @@ public class BlogController
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping("/newentry")
+	@RequestMapping("/{user}/config/newentry")
 	public String newentry( HttpSession session, Model model )
 	{
-		User user = ( User )session.getAttribute("loggeduser");
-		if ( user == null )
+		User loggedUser = ( User )session.getAttribute("loggeduser");
+		if ( loggedUser == null )
 		{
 			return "redirect:/logout";
 		}
@@ -119,10 +118,10 @@ public class BlogController
 	 * @param session
 	 * @return
 	 */
-	@RequestMapping(path="/saveentry", method=RequestMethod.POST)
-	public String saveEntry( HttpServletRequest request, HttpSession session ) throws Exception
+	@RequestMapping(path="/{user}/config/saveentry", method=RequestMethod.POST)
+	public String saveEntry( @PathVariable String user, HttpServletRequest request, HttpSession session ) throws Exception
 	{
-		User user = ( User )session.getAttribute("loggeduser");
+		User loggedUser = ( User )session.getAttribute("loggeduser");
 		Entry entry;
 		if ( request.getParameter("id") != null && !"".equals( request.getParameter("id")))
 		{
@@ -137,19 +136,19 @@ public class BlogController
 		entry.setResume( request.getParameter("resume"));
 		if ( entry.getId() == null )
 		{
-			entry.setAuthor( user.getNick());
-			entry.setBlog( user.getNick());
+			entry.setAuthor( loggedUser.getNick());
+			entry.setBlog( user );
 		}
 		entry.setPublishDate( new SimpleDateFormat( "yyyy-MM-dd HH:mm").parse( request.getParameter("publishDate") + " " + request.getParameter("publishTime") ));
 		entries.save( entry );
 		return "redirect:/goback";
 	}
 	
-	@RequestMapping("/viewentry/{entryId}")
-	public String viewEntry( @PathVariable("entryId") String entryId, Model model )
+	@RequestMapping("/{user}/viewentry/{entryId}")
+	public String viewEntry( @PathVariable String user, @PathVariable("entryId") String entryId, Model model )
 	{		
 		Entry entry = entries.findOne( entryId );
-		if ( entry == null )
+		if ( entry == null || !entry.getBlog().equals( user ) )
 		{
 			return "redirect:/logout";
 		}

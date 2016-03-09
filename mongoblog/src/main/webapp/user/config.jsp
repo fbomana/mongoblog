@@ -6,7 +6,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Mongoblog - ${user.nick}</title>
-	<link rel="stylesheet" href="../../css/mongoblog.css">
+	<link rel="stylesheet" href="../css/mongoblog.css">
 </head>
 <body>
 	<div id="header">
@@ -31,29 +31,31 @@
 			<div id="error">
 			</div>
 			</fieldset>
+			<c:if test='${user.getNick() != null && !user.getNick().equals("")}'>
 			<fieldset>
 				<legend>Actions:</legend>
 					<ul>
-						<li><a href="../changepassword/${user.id}">Change password</a></li>
-						<li><a href="../invite/${user.id}">Invite another user</a></li>
-						<li><a href="../unpublished/${user.id}">Unpublished entries</a>
+						<li><a href="config/changepassword">Change password</a></li>
+						<li><a href="config/invite">Invite another user</a></li>
+						<li><a href="config/unpublished">Unpublished entries</a>
 						<li><a href="javascript:document.fedit.submit();">New Entry</a>
 					</ul>
 			</fieldset>
+			</c:if>
 			</form>
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
-				<a href="../${sessionScope.loggeduser.nick}">home</a><br>
-				<a href="../config/${sessionScope.loggeduser.id}">config</a><br>
-				<a href="../../logout">logout</a>
+				<a href="home">home</a><br>
+				<a href="config">config</a><br>
+				<a href="../logout">logout</a>
 			</c:if>
 			<c:if test="${sessionScope.loggeduser == null}">
-				<a href="../../login">login</a>
+				<a href="../login">login</a>
 			</c:if>
 		</div>
 	</div>
-	<form method="post" name="fedit" action="../../redirect">
+	<form method="post" name="fedit" action="../redirect">
 		<input type="hidden" name="from" value="config">
 		<input type="hidden" name="to" value="newentry">
 	</form>

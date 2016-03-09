@@ -14,7 +14,7 @@
 	</div>
 	<div id="content">
 		<div id="main">
-			<form method="post" id="fpassword" name="fpassword" action="../savepasswordchange">
+			<form method="post" id="fpassword" name="fpassword" action="savepasswordchange">
 			<fieldset>
 			<legend>Change Password</legend>
 			<input type="hidden" name="id" value="${user.id}">
@@ -33,8 +33,8 @@
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
-				<a href="../${sessionScope.loggeduser.nick}">home</a><br>
-				<a href="../config/${sessionScope.loggeduser.id}">config</a><br>
+				<a href="../home">home</a><br>
+				<a href="../config">config</a><br>
 				<a href="../../logout">logout</a>
 			</c:if>
 			<c:if test="${sessionScope.loggeduser == null}">
