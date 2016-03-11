@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Mongoblog - ${user} - Unpublished entries</title>
 	<link rel="stylesheet" href="../../css/mongoblog.css">
+	<link rel="stylesheet" href="../../css/config.css">
 </head>
 <body>
 	<div id="header">

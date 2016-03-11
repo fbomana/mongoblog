@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Mongoblog - ${user.nick} - Invite user</title>
 	<link rel="stylesheet" href="../../css/mongoblog.css">
+	<link rel="stylesheet" href="../../css/config.css">
 	<script src="../../js/mongoblog.js"></script>
 </head>
 <body>

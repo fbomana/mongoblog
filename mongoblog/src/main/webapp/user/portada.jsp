@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Mongoblog - ${user}</title>
 	<link rel="stylesheet" href="../css/mongoblog.css">
+	<link rel="stylesheet" href="../css/blog.css">
 	<script src="../js/mongoblog.js"></script>
 	<script src="../js/marked.min.js"></script>
 </head>

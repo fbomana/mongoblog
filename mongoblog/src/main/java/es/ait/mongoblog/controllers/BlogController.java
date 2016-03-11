@@ -5,7 +5,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -16,8 +15,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.UserDataHandler;
 
 import es.ait.mongoblog.model.Entry;
+import es.ait.mongoblog.model.Entry.Comment;
 import es.ait.mongoblog.model.EntryRepository;
 import es.ait.mongoblog.model.User;
 import es.ait.mongoblog.model.UserRepository;
@@ -160,6 +167,21 @@ public class BlogController
 		model.addAttribute( "entry", entry );
 		model.addAttribute("user", theUser );
 		return "/user/viewentry.jsp";
+	}
+	
+	@RequestMapping(path="/{user}/postcomment", method=RequestMethod.POST)
+	public String postComment( @PathVariable final String user, @RequestParam(name="entry") final String id, @RequestParam(name="newcomment") final String comment, HttpSession session )
+	{
+		User loggedUser = ( User ) session.getAttribute("loggeduser");
+		Entry entry = entries.findOne(id);
+		if ( entry == null )
+		{
+			return "redirect:/logout";
+		}
+		entry.addComment( comment, loggedUser != null ? loggedUser.getNick() : null , new Date() );
+		entries.save( entry );
+		
+		return "redirect:/" + user + "/viewentry/" + id;
 	}
 	
 }

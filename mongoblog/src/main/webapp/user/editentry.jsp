@@ -7,6 +7,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Mongoblog - ${user} - Edit entry</title>
 	<link rel="stylesheet" href="${urlPrefix}../../css/mongoblog.css">
+	<link rel="stylesheet" href="${urlPrefix}../../css/config.css">
 	<link rel="stylesheet" href="${urlPrefix}../../css/newentry.css">
 	<script src="${urlPrefix}../../js/mongoblog.js"></script>
     <script src="${urlPrefix}../../js/vue.min.js"></script>

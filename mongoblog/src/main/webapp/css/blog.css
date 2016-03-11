@@ -1,0 +1,130 @@
+/* Home */
+div#content div#main div.entry {
+	line-height: 1.2;
+	margin-left:3em;
+	margin-right:3em;
+	clear:both;
+}
+div#content div#main div.entry span.title {
+	display:block;
+	font-size:2em;
+	font-weight:bold;
+	color: Maroon;
+}
+
+div#content div#main div.entry img.edit {
+	display:inline-block;
+	margin-left:0.3em;
+	height:0.6em;
+	cursor:pointer;
+}
+
+div#content div#main div.entry span.author {
+	display:block;
+	color:DarkSlateGray;
+	clear:both;
+	float:left;
+}
+
+div#content div#main div.entry span.date {
+	display:block;
+	color:DarkSlateGray;
+	float:left;
+	clear:both;
+}
+
+div#content div#main div.entry div.content {
+	width:100%;
+	color:black;
+	clear:both;
+}
+
+div#content div#main div#navigation {
+	width:100%;
+	clear:both;
+	text-align:center;
+	font-size: 2em;
+	vertical-align: middle;
+}
+
+div#content div#main div#navigation img {
+	vertical-align: middle;
+	padding-right:0.2em;
+	padding-left:0.2em;
+}
+
+div#content div#main p.error {
+	color:red;
+	font-weight: bold;
+	text-align: center;
+}
+
+/* entry detail */
+div#content div#main section#entry 
+{
+	padding-left:3em;
+	padding-right:3em;
+	display:block;
+	clear:both;
+}
+
+div#content div#main section#entry span.title 
+{
+	display:inline-block;
+	clear:both;
+	float:left;
+}
+
+div#content div#main section#entry span.date 
+{
+	display:inline-block;
+	clear:both;
+	float:left;
+}
+
+div#content div#main section#entry span.content 
+{
+	display:inline-block;
+	clear:both;
+	float:left;
+}
+
+div#content div#main section#comments 
+{
+	display:block;
+	clear:both;
+	padding-top:2em;
+	padding-left:4em;
+	padding-right:4em;
+	line-height: 1;
+}
+
+div#content div#main section#comments span.author 
+{
+	font-weight: bold;
+}
+
+div#content div#main section#comments span.author
+{
+	display:inline-block;
+	padding-top:10px;
+}
+div#content div#main section#comments span.date 
+{
+	display:inline;
+	float:none;
+}
+
+div#content div#main section#comments span.content 
+{
+	display:inline-block;
+	width:100%;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-bottom: 1px dotted darkgrey;
+}
+div#content div#main section#comments textarea
+{
+	width:40%;
+	height:200px;
+}
