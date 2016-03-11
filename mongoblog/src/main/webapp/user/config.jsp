@@ -16,18 +16,22 @@
 		<div id="main">
 			<form method="post" id="fusuario" name="fusuario" action="./config/saveconfig">
 			<fieldset>
+			<c:if test="${ !sessionScope.loggeduser.id.equals( user.id )}">
+				<c:set var="readonly" value=" readonly"/>
+				<c:set var="disabled" value=" disabled"/>
+			</c:if>
 			<legend>Config user</legend>
 			<input type="hidden" name="id" value="${user.id}">
 			<label for="nick">Nick:</label>
-			<input type="text" id="nick" name="nick" value="${user.nick}" required><br>
+			<input type="text" id="nick" name="nick" value="${user.nick}" required${readonly}><br>
 			<label for="email">Email:</label>
-			<input type="email" id="email" name="email" value="${user.email}" required><br>
+			<input type="email" id="email" name="email" value="${user.email}" required${readonly}><br>
 			<label for="confirmEmail">Comfirm email:</label>
-			<input type="email" id="confirmEmail" name="confirmEmail" value="${user.email}" required><br>
+			<input type="email" id="confirmEmail" name="confirmEmail" value="${user.email}" required${readonly}><br>
 			<label for="inviteDate">Invite Date:</label>
 			<fmt:formatDate value="${user.inviteDate}" var="formattedDate" type="date" pattern="dd/MM/yyyy HH:mm:ss" />
 			<input type="text" id="inviteDate" name="inviteDate" value="${formattedDate}" class="readonly" readonly><br>
-			<input type="submit" value="update">
+			<input type="submit" value="update"${disabled}>
 			<div id="error">
 			</div>
 			</fieldset>
@@ -35,8 +39,12 @@
 			<fieldset>
 				<legend>Actions:</legend>
 					<ul>
-						<li><a href="config/changepassword">Change password</a></li>
-						<li><a href="config/invite">Invite another user</a></li>
+						<c:if test="${ sessionScope.loggeduser.id.equals( user.id )}">
+							<li><a href="config/changepassword">Change password</a></li>
+							<li><a href="config/invite">Invite another user</a></li>
+							<li><a href="config/editors">Editors</a></li>
+							<li><a href="config/blogs">My Blogs</a></li>
+						</c:if>
 						<li><a href="config/unpublished">Unpublished entries</a>
 						<li><a href="javascript:document.fedit.submit();">New Entry</a>
 					</ul>
@@ -58,6 +66,7 @@
 	<form method="post" name="fedit" action="../redirect">
 		<input type="hidden" name="from" value="config">
 		<input type="hidden" name="to" value="newentry">
+		<input type="hidden" name="nick" value="${user.getNick()}">
 	</form>
 </body>
 <script>

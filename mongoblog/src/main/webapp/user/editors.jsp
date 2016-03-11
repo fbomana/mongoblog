@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Mongoblog - ${user} - Unpublished entries</title>
+	<title>Mongoblog - ${user} - editors</title>
 	<link rel="stylesheet" href="../../css/mongoblog.css">
 </head>
 <body>
@@ -15,11 +15,15 @@
 	<div id="content">
 		<div id="main">
 			<ul>
-				<c:forEach var="entry" items="${entries}">
-					<fmt:formatDate value="${entry.publishDate}" var="formattedDate" type="date" pattern="dd/MM/yyyy HH:mm" />
-					<li><a href="javascript:edit('${entry.id}')">${entry.title}<span class="date">${formattedDate }</span></a></li>
+				<c:forEach var="editor" items="${editors}">
+					<li><a href="../../${editor}/home">${editor}</a></li>
 				</c:forEach>
 			</ul>
+			<form method="post" name="feditor" action="editors">
+			<label for="editor" style="width:18%">Invite a new editor to your blog:</label>
+			<input type="text" id="editor" name="editor" value="" requited>&nbsp;&nbsp;<input type="submit" value="invite">
+			</form>
+			<p class="error">${error}<p>
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
@@ -36,7 +40,6 @@
 		<input type="hidden" name="from" value="unpublished">
 		<input type="hidden" name="to" value="edit">
 		<input type="hidden" name="id" value="">
-		<input type="hidden" name="nick" value="${user}">
 	</form>
 </body>
 <script>

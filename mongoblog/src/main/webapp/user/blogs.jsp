@@ -5,12 +5,8 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Mongoblog - ${user.nick} - Edit entry</title>
+	<title>Mongoblog - ${user} - blogs</title>
 	<link rel="stylesheet" href="../../css/mongoblog.css">
-	<link rel="stylesheet" href="../../css/newentry.css">
-	<script src="../../js/mongoblog.js"></script>
-    <script src="../../js/vue.min.js"></script>
-    <script src="../../js/marked.min.js"></script>
 </head>
 <body>
 	<div id="header">
@@ -18,11 +14,11 @@
 	</div>
 	<div id="content">
 		<div id="main">
-			<h1>${entry.title}</h1>
-			${entry.entry}
-			<p>
-				${entry.publishDate}
-			</p>
+			<ul>
+				<c:forEach var="blog" items="${blogs}">
+					<li><a href="../../${blog.nick}/home">${blog.nick}</a></li>
+				</c:forEach>
+			</ul>
 		</div>
 		<div id="side">
 			<c:if test="${sessionScope.loggeduser != null}">
@@ -35,5 +31,17 @@
 			</c:if>
 		</div>
 	</div>
+	<form method="post" name="fedit" action="../../redirect">
+		<input type="hidden" name="from" value="unpublished">
+		<input type="hidden" name="to" value="edit">
+		<input type="hidden" name="id" value="">
+	</form>
 </body>
+<script>
+function edit ( id )
+{
+	document.fedit.id.value = id;
+	document.fedit.submit();
+}
+</script>
 </html>

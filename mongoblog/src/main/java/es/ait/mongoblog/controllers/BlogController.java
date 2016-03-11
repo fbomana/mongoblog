@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import es.ait.mongoblog.model.Entry;
 import es.ait.mongoblog.model.EntryRepository;
 import es.ait.mongoblog.model.User;
+import es.ait.mongoblog.model.UserRepository;
 
 @Controller
 public class BlogController 
@@ -29,6 +30,9 @@ public class BlogController
 	
 	@Autowired
 	private EntryRepository entries;
+	
+	@Autowired
+	private UserRepository users;
 	
 	@RequestMapping("/{user}/home")
 	public String portadaBlog( @PathVariable String user, Model model, HttpSession session )
@@ -64,7 +68,7 @@ public class BlogController
 			return "redirect:/logout";
 		}
 		
-		model.addAttribute("entries", entries.findByAuthorAndPublishDateAfterOrderByPublishDateAsc( user, new Date()));
+		model.addAttribute("entries", entries.findByBlogAndPublishDateAfterOrderByPublishDateAsc( user, new Date()));
 		
 		return "/user/unpublished.jsp";
 	}
@@ -152,7 +156,9 @@ public class BlogController
 		{
 			return "redirect:/logout";
 		}
+		User theUser = users.findOneByNick( user );
 		model.addAttribute( "entry", entry );
+		model.addAttribute("user", theUser );
 		return "/user/viewentry.jsp";
 	}
 	

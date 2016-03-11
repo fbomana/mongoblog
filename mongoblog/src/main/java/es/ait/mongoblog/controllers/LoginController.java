@@ -75,6 +75,11 @@ public class LoginController
 	public String redirectTo( HttpServletRequest request, HttpSession session )
 	{
 		User user = ( User ) session.getAttribute("loggeduser");
+		User blogUser = users.findOneByNick( request.getParameter("nick"));
+		if ( blogUser != null )
+		{
+			session.setAttribute("returnblog", blogUser.getNick());
+		}
 		
 		session.setAttribute("from", request.getParameter("from"));
 		if ( "home".equals( request.getParameter("from")))
@@ -86,11 +91,11 @@ public class LoginController
 		{
 			case "edit":
 			{
-				return "redirect:/" + user.getNick() + "/config/editentry/" + request.getParameter("id");
+				return "redirect:/" + (blogUser!= null ? blogUser.getNick() : user.getNick()) + "/config/editentry/" + request.getParameter("id");
 			}
 			case "newentry":
 			{
-				return "redirect:/" + user.getNick() + "/config/newentry";
+				return "redirect:/" + (blogUser!= null ? blogUser.getNick() : user.getNick()) + "/config/newentry";
 			}
 			case "viewentry":
 			{
@@ -106,6 +111,8 @@ public class LoginController
 	{
 		String from = (String)session.getAttribute("from");
 		session.removeAttribute("from");
+		String returnBlog = (String) session.getAttribute("returnblog");
+		session.removeAttribute("returnblog");
 		switch ( from )
 		{
 			case "home":
@@ -123,7 +130,7 @@ public class LoginController
 				User user = ( User )session.getAttribute("loggeduser");
 				if ( user != null )
 				{
-					return "redirect:/" + user.getNick() + "/config/unpublished";
+					return "redirect:/" + ( returnBlog != null ? returnBlog : user.getNick() ) + "/config/unpublished";
 				}
 				break;
 			}
@@ -132,7 +139,7 @@ public class LoginController
 				User user = ( User )session.getAttribute("loggeduser");
 				if ( user != null )
 				{
-					return "redirect:/" + user.getNick() + "/config";
+					return "redirect:/" + ( returnBlog != null ? returnBlog : user.getNick() ) + "/config";
 				}
 				break;
 			}

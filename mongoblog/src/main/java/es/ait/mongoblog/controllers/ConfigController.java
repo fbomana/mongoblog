@@ -40,17 +40,31 @@ public class ConfigController
 	public String config(@PathVariable String user, Model model, HttpSession session )
 	{
 		User loggedUser = (User)session.getAttribute("loggeduser");
-		if ( loggedUser != null && user.equals( loggedUser.getNick()))
+		if ( loggedUser != null )
 		{
-			loggedUser = users.findOneByNick( user );
-			model.addAttribute("user", loggedUser );
-			return "/user/config.jsp";
-		}
-		else if ( loggedUser != null && user.equals( loggedUser.getEmail()) && loggedUser.getNick() == null )
-		{			
-			model.addAttribute("user", loggedUser );
-			return "/user/config.jsp";
-		}
+			// A user enters it's own account configuration
+			if ( user.equals( loggedUser.getNick()))
+			{
+				loggedUser = users.findOneByNick( user );
+				model.addAttribute("user", loggedUser );
+				return "/user/config.jsp";
+			}
+
+			// A user enters it's own account configuration for the first time
+			if ( user.equals( loggedUser.getEmail()) && loggedUser.getNick() == null )
+			{			
+				model.addAttribute("user", loggedUser );
+				return "/user/config.jsp";
+			}
+			
+			// A user enters an account that have him on the editors list
+			User theUser = users.findOneByNick( user );
+			if ( theUser.getEditors() != null && theUser.getEditors().contains( loggedUser.getNick()))
+			{
+				model.addAttribute("user", theUser );
+				return "/user/config.jsp";
+			}
+		}	
 		return "redirect:/logout";
 	}
 	
@@ -169,7 +183,7 @@ public class ConfigController
 		User duplicated = users.findOneByEmailOrInviteEmail( request.getParameter("email"), request.getParameter("email") );
 		if ( duplicated != null )
 		{
-			return "redirect:/user/invite/" + sessionUser.getId() + "?error=1"; 
+			return "redirect:/" + sessionUser.getNick() + "/config/sendinvite?error=1"; 
 		}
 			
 		User user = new User();
@@ -191,5 +205,63 @@ public class ConfigController
 		
 		
 		return "redirect:/" + sessionUser.getNick() + "/config"; 
+	}
+	
+	@RequestMapping( path="/{user}/config/editors", method=RequestMethod.GET)
+	public String editors( @PathVariable final String user, @RequestParam(name="error", required=false) String error, Model model )
+	{
+		User theUser = users.findOneByNick( user );
+		if ( theUser == null )
+		{
+			return "redirect:/logout";
+		}
+		if ( "1".equals( error ))
+		{
+			model.addAttribute("error", "Error: invalid editor name");
+		}
+		if ( "2".equals( error ))
+		{
+			model.addAttribute("error", "Error: editor already invited");
+		}
+		model.addAttribute("editors", theUser.getEditors());
+		return "/user/editors.jsp";
+	}
+	
+	@RequestMapping( path="/{user}/config/editors", method=RequestMethod.POST)
+	public String inviteEditor( @PathVariable final String user, HttpSession session, HttpServletRequest request, Model model )
+	{
+		User theUser = users.findOneByNick( user );
+		User loggedUser = (User)session.getAttribute("loggeduser");
+		if ( theUser == null || loggedUser == null || !theUser.getId().equals( loggedUser.getId()))
+		{
+			return "redirect:/logout";
+		}
+		
+		User editor = users.findOneByNick( request.getParameter("editor"));
+		if ( editor == null )
+		{
+			return "redirect:/" + theUser.getNick() + "/config/editors?error=1";
+		}
+		if ( loggedUser.getEditors().contains( editor.getNick()))
+		{
+			return "redirect:/" + theUser.getNick() + "/config/editors?error=2";
+		}
+		
+		loggedUser.addEditor( editor.getNick());
+		users.save( loggedUser );
+		
+		return "redirect:/" + theUser.getNick() + "/config/editors";
+	}
+	
+	@RequestMapping( path="/{user}/config/blogs", method=RequestMethod.GET)
+	public String blogs( @PathVariable final String user, HttpSession session, Model model )
+	{
+		User loggedUser = ( User ) session.getAttribute("loggeduser");
+		if ( !user.equals( loggedUser.getNick()))
+		{
+			return "redirect:/logout";
+		}
+		model.addAttribute("blogs", users.findBlogsEditedBy( user ) );
+		return "/user/blogs.jsp";
 	}
 }

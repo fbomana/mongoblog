@@ -1,5 +1,6 @@
 package es.ait.mongoblog.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +74,15 @@ public class User
 
 	public void setEditors(List<String> editors) {
 		this.editors = editors;
+	}
+	
+	public void addEditor( String editor )
+	{
+		if ( editors == null )
+		{
+			editors = new ArrayList<String>();
+		}
+		editors.add( editor );
 	}
 	
 }

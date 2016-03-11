@@ -15,5 +15,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface EntryRepository extends MongoRepository<Entry, String> 
 {
 	Page<Entry> findByBlogAndPublishDateBeforeOrderByPublishDateDesc( String author, Date publishDate, Pageable pageable );
+	List<Entry> findByBlogAndPublishDateAfterOrderByPublishDateAsc( String blog, Date publishDate );
 	List<Entry> findByAuthorAndPublishDateAfterOrderByPublishDateAsc( String author, Date publishDate );
 }
